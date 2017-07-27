@@ -321,7 +321,7 @@ class Select extends React.Component {
 		this._openAfterFocus = false;
 	}
 
-	handleInputBlur (event) {
+	handleInputBlur(event) {
 		// The check for menu.contains(activeElement) is necessary to prevent IE11's scrollbar from closing the menu in certain contexts.
 		if (this.menu && (this.menu === document.activeElement || this.menu.contains(document.activeElement))) {
 			this.focus();
@@ -331,13 +331,16 @@ class Select extends React.Component {
 		if (this.props.onBlur) {
 			this.props.onBlur(event);
 		}
-		var onBlurredState = {
+		let onBlurredState = {
 			isFocused: false,
-			isOpen: false,
+			// If the blur event source is within the menu, don't close - it's
+			// likely an input element stealing focus, in which case we don't
+			// want to close the menu - someone's editing that input!
+			isOpen: this.menu ? this.menu.contains(event.relatedTarget) : false,
 			isPseudoFocused: false,
 		};
 		if (this.props.onBlurResetsInput) {
-			onBlurredState.inputValue = this.handleInputValueChange('');
+			onBlurredState.inputValue = '';
 		}
 		this.setState(onBlurredState);
 	}
